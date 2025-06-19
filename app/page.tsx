@@ -1,13 +1,12 @@
-import { getServerSession } from "next-auth";
 import React from "react";
+import { signOut } from "next-auth/react";
+import { redirect } from "next/navigation";
+import HomePage from "@/components/HomePage";
 
 const Page = async () => {
-  const session = await getServerSession();
   return (
     <>
-      <div>{JSON.stringify(session)}</div>
-      <div>{session?.user?.image}</div>
-      <img src={`${session?.user?.image}`} alt="" />
+      <HomePage />
     </>
   );
 };
