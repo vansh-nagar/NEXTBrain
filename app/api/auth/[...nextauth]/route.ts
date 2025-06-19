@@ -12,13 +12,12 @@ const prisma = new PrismaClient();
 const handler = NextAuth({
   providers: [
     CredentialsProvider({
-      // The name to display on the sign in form (e.g. 'Sign in with...')
       name: "email",
       credentials: {
         username: {
           label: "Username",
           type: "text",
-          placeholder: "vanshngar@1029",
+          placeholder: "XYZ@gmail.com",
         },
         password: {
           label: "Password",
@@ -35,34 +34,35 @@ const handler = NextAuth({
 
         const foundUser = await prisma.user.findUnique({
           where: {
-            name: username,
+            email: username,
           },
         });
 
         if (foundUser) {
+          if (!foundUser.password) {
+            return null;
+          }
           const result = await bcrypt.compare(password, foundUser.password);
           if (result) {
             console.log("foundUser:", foundUser);
-            const user = { name: foundUser.username };
+            const user = { name: foundUser.email };
             return user;
           } else {
             return null;
           }
         }
 
-        console.log(foundUser);
-
-        const hash = await bcrypt.hash(password, 10);
-        const createdUser = await prisma.user.create({
-          data: {
-            email: credentials.username,
-            : hash,
-            sharable: false,
-          },
-        });
-        console.log("createdUser:", createdUser);
-        const user = { name: createdUser.username };
-        return user;
+        // const hash = await bcrypt.hash(password, 10);
+        // const createdUser = await prisma.user.create({
+        //   data: {
+        //     email: credentials.username,
+        //     password: hash,
+        //     sharable: false,
+        //   },
+        // });
+        // console.log("createdUser:", createdUser);
+        // const user = { name: createdUser.email };
+        // return user;
       },
     }),
 
