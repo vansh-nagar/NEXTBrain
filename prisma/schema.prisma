@@ -22,10 +22,11 @@ model User {
   accounts      Account[]
   sessions      Session[]
   // Optional for WebAuthn support
+  
   Authenticator Authenticator[]
   password          String?
   sharable      Boolean @default(false)
-  link          String @default("")
+  link          String @default("http://localhost:3000/db/getOtherUserData/")
   content       Content[]
 
  
@@ -45,6 +46,7 @@ model Content {
   type         ContentType
   link         String   @unique
   title         String    @unique
+  imageUrl      String
 
   userId       String 
   user User @relation(fields: [userId] , references: [id])

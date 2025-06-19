@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
     where: {
       email: session.user.email,
     },
-    include: {
+    select: {
       content: true,
     },
   });
