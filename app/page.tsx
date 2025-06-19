@@ -1,13 +1,14 @@
-import React from "react";
-import { signOut } from "next-auth/react";
-import { redirect } from "next/navigation";
-import HomePage from "@/components/HomePage";
+"use client";
 
-const Page = async () => {
+import React from "react";
+import HomePage from "@/components/HomePage";
+import { SessionProvider } from "next-auth/react";
+
+const Page = () => {
   return (
-    <>
+    <SessionProvider>
       <HomePage />
-    </>
+    </SessionProvider>
   );
 };
 

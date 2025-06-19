@@ -1,39 +1,100 @@
+"use client";
 import { getServerSession } from "next-auth";
 import { PrismaClient } from "@prisma/client";
+import axios from "axios";
+import React, { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 
-export default async function HomePage() {
-  const prisma = new PrismaClient();
-  const session = await getServerSession();
+export default function HomePage() {
+  const [link, setLink] = useState("");
+  const [title, setTitle] = useState("");
+  const [category, setCategory] = useState("");
+  type ContentItem = {
+    id: number;
+    type: string;
+    link: string;
+    title: string;
+    // add other fields if needed
+  };
+  const [content, setcontent] = useState<ContentItem[]>([]);
 
-  let user = null;
-  let content = null;
+  const { data: session } = useSession();
 
-  if (session?.user?.email) {
-    user = await prisma.user.findFirst({
-      where: {
-        email: session.user.email,
-      },
-    });
-  }
+  useEffect(() => {
+    console.log(session);
+    axios
+      .post("http://localhost:3000/db/getContent", { session })
+      .then((res) => {
+        console.log("data", res.data.foundUser.content);
+        setcontent(res.data.foundUser.content);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [session]);
 
-  if (user) {
-    content = await prisma.content.create({
-      data: {
-        type: "youtube",
-        link: "https://www.youtube.com/watch?v=PEzdh8cJTuM",
-        title: "andrew tate motivation",
-        userId: user.id,
-      },
-    });
-  }
+  const createContent = () => {
+    if (!link || !title || !category) {
+      return;
+    }
+    console.log("hello");
+    axios
+      .post("http://localhost:3000/db/createContent", {
+        data: session,
+        link,
+        category,
+        title,
+      })
+      .then((res) => [console.log(res.data.message)])
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   return (
     <div>
-      <pre>{JSON.stringify(session, null, 2)}</pre>
-      <div className="bg-red-600">
-        {user ? JSON.stringify(user, null, 2) : "No user found"}
+      <input
+        onChange={(e) => {
+          setLink(e.target.value);
+        }}
+        type="text"
+        placeholder="link"
+        value={link}
+      />
+      <input
+        type="text"
+        placeholder="title"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+      />
+      <select value={category} onChange={(e) => setCategory(e.target.value)}>
+        <option value="">Select category</option>
+        <option value="document">document</option>
+        <option value="tweet">tweet</option>
+        <option value="youtube">youtube</option>
+        <option value="link">link</option>
+      </select>
+      <button
+        onClick={() => {
+          createContent();
+        }}
+      >
+        create content
+      </button>
+
+      <div>
+        {content &&
+          content.map((conti) => (
+            <div className="border" key={conti.id}>
+              <div>{conti.type}</div>
+              <a href={conti.link} target="_blank" rel="noopener noreferrer">
+                {conti.link}
+              </a>
+              <div>{conti.title}</div>
+              <button className="bg-red-400 text-white">Delete</button>
+            </div>
+          ))}
       </div>
-      <div className="bg-black text-white">{JSON.stringify(content)}</div>
     </div>
   );
 }
