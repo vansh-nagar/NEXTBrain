@@ -3,12 +3,21 @@
 import React, { useEffect, useRef, use, useState } from "react";
 import { prisma } from "@/lib/prisma";
 import axios from "axios";
+import SmartEmbed from "@/components/smartEmbeded";
 
 const Page = ({ params }: { params: Promise<{ email: string }> }) => {
   const { email } = use(params);
   const decodetoken = decodeURIComponent(email);
   const [data, setdata] = useState([]);
   const [message, setmessage] = useState("");
+
+  type content = {
+    id: string;
+    title: string;
+    link: string;
+    type: string;
+    description: string;
+  };
 
   useEffect(() => {
     axios
@@ -31,19 +40,44 @@ const Page = ({ params }: { params: Promise<{ email: string }> }) => {
   return (
     <div>
       {data.length === 0 ? (
-        <div className="flex justify-center items-center bg-black text-white h-screen w-full">
+        <div className="flex justify-center items-center bg-zinc-900 text-white h-screen w-full">
           {message}
         </div>
       ) : (
-        data.map((conti: any) => (
-          <div className="border" key={conti.id}>
-            <div>{conti.type}</div>
-            <a href={conti.link} target="_blank" rel="noopener noreferrer">
-              {conti.link}
-            </a>
-            <div>{conti.title}</div>
-          </div>
-        ))
+        <div className="flex justify-between p-10  bg-zinc-900 max-sm:p-4 pt-[70px] max-sm:pt-[120px]   flex-wrap">
+          {data.map((conti: content) => (
+            <div
+              key={conti.id}
+              className=" bg-gradient-to-br  from-zinc-800/80 to-zinc-900/90 mt-6 max-sm:my-3  rounded-xl p-6 text-zinc-100 w-[30vw] max-sm:w-[100vw] shadow flex flex-col gap-4 hover:scale-[1.025] transition-transform duration-200 border border-zinc-700"
+            >
+              <div
+                className="flex items-center justify-between mb-2"
+                data-id={conti.id}
+              >
+                <span className="uppercase tracking-widest text-xs font-bold text-zinc-400 bg-zinc-900/60 px-2 py-1 rounded">
+                  {conti.type}
+                </span>
+              </div>
+              <div className="flex justify-center">
+                <SmartEmbed url={conti.link} />
+              </div>
+
+              <div className="text-xl font-semibold text-zinc-100 mt-2 mb-1">
+                {conti.title}
+              </div>
+              <a
+                href={`${conti.link}`}
+                target="_blank"
+                className="text-xs text-blue-400 cursor-pointer"
+              >
+                {conti.link}
+              </a>
+              <div className="text-xs font-semibold text-zinc-100/70  ">
+                {conti.description}
+              </div>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );

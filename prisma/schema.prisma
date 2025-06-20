@@ -44,9 +44,9 @@ enum ContentType {
 model Content {
   id           Int @default(autoincrement()) @id
   type         ContentType
-  link         String   @unique
-  title         String    @unique
-  imageUrl      String
+  link         String?   @unique
+  title         String    
+  description      String?
 
   userId       String 
   user User @relation(fields: [userId] , references: [id])
