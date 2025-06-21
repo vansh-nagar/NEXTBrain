@@ -44,7 +44,8 @@ enum ContentType {
 model Content {
   id           Int @default(autoincrement()) @id
   type         ContentType
-  link         String?   @unique
+  link         String?
+  @@unique([userId, link])
   title         String    
   description      String?
 

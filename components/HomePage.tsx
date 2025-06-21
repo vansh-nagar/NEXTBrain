@@ -7,8 +7,19 @@ import gsap, { set } from "gsap";
 import {
   RiArrowDownSFill,
   RiArrowDownSLine,
+  RiAsterisk,
   RiCloseLine,
+  RiDraftLine,
+  RiGitRepositoryPrivateLine,
   RiHeartFill,
+  RiLinksLine,
+  RiLockUnlockFill,
+  RiLockUnlockLine,
+  RiShare2Fill,
+  RiShareLine,
+  RiTwitterLine,
+  RiTwitterXLine,
+  RiYoutubeLine,
 } from "@remixicon/react";
 import SmartEmbed from "./smartEmbeded";
 
@@ -24,6 +35,11 @@ export default function HomePage() {
   const [error, seterror] = useState<null | string>(null);
   const [content, setcontent] = useState<ContentItem[]>([]);
   const [filter, setfilter] = useState<null | string>(null);
+
+  const [ShowPromtBox, setShowPromtBox] = useState(false);
+  const [Prompt, setPrompt] = useState("");
+  const [AiResult, setAiResult] = useState<ContentItem | null>(null);
+  const [showSharableUrl, setshowSharableUrl] = useState(false);
 
   const { data: session } = useSession();
 
@@ -41,6 +57,25 @@ export default function HomePage() {
     const timer = setTimeout(() => seterror(null), 3000);
     return () => clearTimeout(timer);
   }, [error]);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.ctrlKey && (event.key === "i" || event.key === "I")) {
+        setShowPromtBox(true);
+        seterror("Press Escape button Exit");
+      } else if (event.key === "Escape") {
+        setShowPromtBox(false);
+      }
+    };
+
+    seterror("Press Ctrl + I to use AI");
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
   type ContentItem = {
     id: number;
@@ -137,6 +172,23 @@ export default function HomePage() {
       });
   };
 
+  const handleGroq = async () => {
+    axios
+      .post("http://localhost:3000/db/ASKGroq", {
+        message: Prompt,
+        session,
+      })
+      .then((res) => {
+        console.log(res.data.result);
+
+        setAiResult(JSON.parse(res.data.result));
+      })
+      .catch((err) => {
+        console.error("Error fetching Groq response:", err);
+        seterror("Failed to fetch AI response. Please try again.");
+      });
+  };
+
   return (
     <div
       style={{
@@ -149,38 +201,123 @@ export default function HomePage() {
       }}
       className="bg-zinc-900 w-full relative"
     >
-      <div className="z-50 shadow-green-500 backdrop-blur-lg flex fixed justify-evenly items-center gap-4 top-4 left-10 bg-zinc-800/80 text-neutral-200 py-4 px-6 rounded-md shadow-2xs border border-zinc-700">
+      {ShowPromtBox && (
+        <div className="bg-black/50  fixed w-full h-screen flex justify-center items-center backdrop-blur-md z-50 ">
+          <div className="bg-zinc-700/40 backdrop-blur-3xl rounded-md p-4 flex justify-center flex-col items-center w-[35vw] max-sm:w-[90vw] max-md:w-[70%]">
+            <textarea
+              onChange={(e) => {
+                setPrompt(e.target.value);
+              }}
+              className="bg-zinc-700/80 w-full text-zinc-100 px-4 py-3 rounded-md  shadow-xl mt-3.5 placeholder-zinc-400 border border-zinc-600 focus:outline-none focus:ring-2 focus:ring-zinc-500"
+              placeholder="Enter your prompt here"
+            />
+            <div className=" flex justify-end  w-full mt-4">
+              <button
+                onClick={(e) => {
+                  handleGroq();
+                }}
+                className=" bg-zinc-900 text-white hover:shadow-blue-600 hover:shadow-2xl transition-all duration-200 hover:rotate-x-12 aiButton relative px-4 py-2 rounded overflow-hidden shadow-2xs shadow-white"
+              >
+                Ask AI
+              </button>
+            </div>
+            {AiResult && (
+              <div
+                key={AiResult.id}
+                className=" bg-gradient-to-br  from-zinc-800/80 to-zinc-900/90 mt-6 max-sm:my-3  rounded-xl p-6 text-zinc-100 w-full shadow flex  flex-col gap-4 hover:scale-[1.025] transition-transform duration-200 border border-zinc-700"
+              >
+                <div
+                  className="flex items-center justify-between mb-2"
+                  data-id={AiResult.id}
+                >
+                  <span className="uppercase tracking-widest text-xs font-bold text-zinc-400 bg-zinc-900/60 px-2 py-1 rounded">
+                    {AiResult.type}
+                  </span>
+                </div>
+                {AiResult.link && (
+                  <div className="flex justify-center w-full  overflow-auto scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-zinc-900 rounded-md">
+                    <SmartEmbed url={AiResult.link} />
+                  </div>
+                )}
+
+                <div className="text-xl font-semibold text-zinc-100 mt-2 mb-1">
+                  {AiResult.title}
+                </div>
+                <a
+                  href={`${AiResult.link}`}
+                  target="_blank"
+                  className="text-xs text-blue-400 cursor-pointer"
+                >
+                  {AiResult.link}
+                </a>
+                <div className="text-xs font-semibold text-zinc-100/70  ">
+                  {AiResult.description}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {showSharableUrl && (
+        <div
+          onClick={() => {
+            setshowSharableUrl(false);
+          }}
+          className="bg-black/50  fixed w-full h-screen flex justify-center items-center backdrop-blur-md z-50 "
+        >
+          <div className="bg-zinc-700/40 backdrop-blur-3xl rounded-md p-4 flex justify-center flex-row gap-4 items-center w-[35vw] max-md:w-[70vw] max-sm:w-[90vw] flex-wrap break-all">
+            <span className="text-xs sm:text-sm md:text-base break-all">
+              {`http://localhost:3000/getContent/${session?.user.email}`}
+            </span>
+            <RiShare2Fill
+              className="cursor-pointer"
+              onClick={() => {
+                navigator.clipboard.writeText(
+                  `http://localhost:3000/getContent/${session?.user.email}`
+                );
+              }}
+            />
+          </div>
+        </div>
+      )}
+
+      <div className="z-40 shadow-green-500 backdrop-blur-lg flex fixed justify-evenly items-center gap-4 top-4 left-10 bg-zinc-800/80 text-neutral-200 py-4 px-6 rounded-md shadow-2xs border border-zinc-700">
         <button
           onClick={() => {
             setfilter("youtube");
           }}
+          title="Show only YouTube"
           className="hover:text-white active:text-zinc-300 hover:scale-105 transition-all duration-200"
         >
-          youtube
+          <RiYoutubeLine />
         </button>
         <button
           onClick={() => {
             setfilter("tweet");
           }}
+          title="Show only Tweets"
           className="hover:text-white active:text-zinc-300 hover:scale-105 transition-all duration-200"
         >
-          tweet
+          <RiTwitterXLine />
         </button>
         <button
           onClick={() => {
             setfilter("link");
           }}
+          title="Show only Links"
           className="hover:text-white active:text-zinc-300 hover:scale-105 transition-all duration-200"
         >
-          link
+          <RiLinksLine />
         </button>
         <button
           className="hover:text-white active:text-zinc-300 hover:scale-105 transition-all duration-200"
           onClick={() => {
             setfilter("document");
           }}
+          title="Show only Documents"
         >
-          document
+          <RiDraftLine />
         </button>
 
         <button
@@ -188,32 +325,45 @@ export default function HomePage() {
           onClick={() => {
             setfilter(null);
           }}
+          title="Show All"
         >
-          all
+          <RiAsterisk />
         </button>
       </div>
-      <div className="z-50 shadow-green-500 backdrop-blur-lg flex fixed justify-evenly items-center gap-4 top-4 -translate-x-1/2 left-1/2 bg-zinc-800/80 text-neutral-200 py-4 px-6 rounded-md shadow-2xs border border-zinc-700">
+      <div className="z-40 shadow-green-500 backdrop-blur-lg flex fixed justify-evenly items-center gap-4 top-4 -translate-x-1/2 left-1/2 bg-zinc-800/80 text-neutral-200 py-4 px-6 rounded-md shadow-2xs border border-zinc-700">
         <button
           onClick={() => {
             setshowUploader(true);
           }}
-          className="hover:text-white active:text-zinc-300 hover:scale-105 transition-all duration-200"
+          className="hover:text-white flex flex-row gap-1 active:text-zinc-300 hover:scale-105 transition-all duration-200"
         >
           Upload content
+          <RiShare2Fill />
         </button>
         <button
-          className="hover:text-white active:text-zinc-300 hover:scale-105 transition-all duration-200"
+          className="hover:text-white flex gap-1  flex-row active:text-zinc-300 hover:scale-105 transition-all duration-200"
           onClick={() => {
             toggleLink();
           }}
         >
           {sharable ? "Private" : "Public"}
+
+          {sharable ? <RiLockUnlockFill /> : <RiGitRepositoryPrivateLine />}
+        </button>
+        <button
+          className="hover:text-white active:text-zinc-300 hover:scale-105 transition-all duration-200 flex flex-row gap-1"
+          onClick={() => {
+            setshowSharableUrl(true);
+            setshowUploader(false);
+          }}
+        >
+          Share <RiShareLine />
         </button>
       </div>
 
       {session && (
         <button
-          className=" cursor-pointer   z-50 backdrop-blur-lg flex fixed  hover:scale-110 shadow-2xs shadow-white transition-all duration-500 items-center gap-4 top-4 right-10 bg-zinc-800/80 text-red-600  hover:shadow-xl hover:text-white hover:shadow-red-600  py-4 px-6 rounded-md  hover:rotate-x-[20deg] border border-zinc-700"
+          className=" cursor-pointer   z-40 backdrop-blur-lg flex fixed  hover:scale-110 shadow-2xs shadow-white transition-all duration-500 items-center gap-4 top-4 right-10 bg-zinc-800/80 text-red-600  hover:shadow-xl hover:text-white hover:shadow-red-600  py-4 px-6 rounded-md  hover:rotate-x-[20deg] border border-zinc-700"
           onClick={() => {
             signOut();
           }}
