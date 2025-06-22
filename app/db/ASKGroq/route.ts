@@ -6,6 +6,7 @@ const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 });
 console.log(process.env.GROQ_API_KEY);
+import { createEmbed } from "@/lib/createEmbed";
 
 export async function POST(request: NextRequest) {
   const { message, session } = await request.json();
@@ -24,6 +25,11 @@ export async function POST(request: NextRequest) {
       content: true,
     },
   });
+
+  const sqlVecMessage = await createEmbed({ document: [message] });
+
+  const QueryPGvector = await prisma.$queryRaw`
+  SELECT`;
 
   const TransationResponse = await groq.chat.completions.create({
     messages: [

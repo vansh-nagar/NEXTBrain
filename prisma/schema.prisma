@@ -61,7 +61,7 @@ model Content {
   createdAt  DateTime @default(now())
 
 
-  embedding Unsupported("vector(3)")?
+  embedding Unsupported("vector(1536)")?
 
 }
 
