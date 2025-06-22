@@ -181,7 +181,10 @@ export default function HomePage() {
         session,
       })
       .then((res) => {
-        console.log(res.data.result);
+        console.log(
+          "result,..,,.,.,..,,.,.,..,.,.,.,,.,.,.,.",
+          res.data.result
+        );
 
         setAiResult(JSON.parse(res.data.result));
       })
