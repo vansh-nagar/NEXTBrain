@@ -1,5 +1,10 @@
 import { NextResponse, NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { CohereClient } from "cohere-ai";
+
+const co = new CohereClient({
+  token: process.env.COHERE_API_KEY,
+});
 
 export async function POST(req: NextRequest) {
   const { data, link, category, title, description } = await req.json();
@@ -32,6 +37,16 @@ export async function POST(req: NextRequest) {
         description: description || "",
       },
     });
+
+    const document = [category, title, description];
+    const embedding = await co.embed({
+      texts: document,
+      model: "embed-v4.0",
+      inputType: "search_document",
+      embeddingTypes: ["float"],
+    });
+
+    console.log("Embedding created:", embedding.embeddings.float[0]);
   } catch (error) {
     console.log(error);
     return NextResponse.json({ error: "content exists" }, { status: 500 });

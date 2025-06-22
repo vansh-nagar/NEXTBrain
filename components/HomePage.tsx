@@ -62,6 +62,8 @@ export default function HomePage() {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.ctrlKey && (event.key === "i" || event.key === "I")) {
         setShowPromtBox(true);
+
+        setshowUploader(false);
         seterror("Press Escape button Exit");
       } else if (event.key === "Escape") {
         setShowPromtBox(false);
@@ -216,7 +218,7 @@ export default function HomePage() {
                 onClick={(e) => {
                   handleGroq();
                 }}
-                className=" bg-zinc-900 text-white hover:shadow-blue-600 hover:shadow-2xl transition-all duration-200 hover:rotate-x-12 aiButton relative px-4 py-2 rounded overflow-hidden shadow-2xs shadow-white"
+                className=" bg-zinc-900 text-white hover:shadow-purple-600 hover:shadow-xl transition-all duration-200 hover:rotate-x-12 aiButton relative px-4 py-2 rounded overflow-hidden shadow-2xs shadow-green-600"
               >
                 Ask AI
               </button>
