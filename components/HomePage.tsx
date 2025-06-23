@@ -288,6 +288,9 @@ export default function HomePage() {
             <RiShare2Fill
               className="cursor-pointer"
               onClick={() => {
+                if (session?.user?.email === undefined) {
+                  return;
+                }
                 navigator.clipboard.writeText(
                   `http://localhost:3000/getContent/${session?.user.email}`
                 );
