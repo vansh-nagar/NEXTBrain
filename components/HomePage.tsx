@@ -27,7 +27,6 @@ export default function HomePage() {
   const [description, setdescription] = useState("");
 
   const [showUploader, setshowUploader] = useState(false);
-  const [SetOverLay, setSetOverLay] = useState(false);
   const [error, seterror] = useState<null | string>(null);
   const [content, setcontent] = useState<ContentItem[]>([]);
   const [filter, setfilter] = useState<null | string>(null);
@@ -40,6 +39,21 @@ export default function HomePage() {
   const { data: session } = useSession();
 
   const ErrorDiv = useRef(null);
+
+  const getContent = () => {
+    // Refetch content after successful deletion
+    axios
+      .post("http://localhost:3000/db/getContent", { session, filter })
+      .then((res) => {
+        console.log(res.data.userContent);
+        setcontent(res.data.userContent);
+        console.log(res.data.foundUser.sharable);
+        setsharable(res.data.foundUser.sharable);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   useEffect(() => {
     if (!error) return;
@@ -85,7 +99,7 @@ export default function HomePage() {
     // add other fields if needed
   };
 
-  const getContent = () => {
+  useEffect(() => {
     // Refetch content after successful deletion
     axios
       .post("http://localhost:3000/db/getContent", { session, filter })
@@ -98,10 +112,6 @@ export default function HomePage() {
       .catch((err) => {
         console.log(err);
       });
-  };
-
-  useEffect(() => {
-    getContent();
   }, [session, filter]);
 
   const createContent = () => {
