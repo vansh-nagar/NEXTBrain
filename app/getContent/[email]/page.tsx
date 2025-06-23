@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, use, useState } from "react";
-import { prisma } from "@/lib/prisma";
+import React, { useEffect, use, useState } from "react";
 import axios from "axios";
 import SmartEmbed from "@/components/smartEmbeded";
 

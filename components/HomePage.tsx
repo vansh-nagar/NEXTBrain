@@ -3,21 +3,17 @@ import axios from "axios";
 import React, { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { signOut } from "next-auth/react";
-import gsap, { set } from "gsap";
+import gsap from "gsap";
 import {
-  RiArrowDownSFill,
   RiArrowDownSLine,
   RiAsterisk,
   RiCloseLine,
   RiDraftLine,
   RiGitRepositoryPrivateLine,
-  RiHeartFill,
   RiLinksLine,
   RiLockUnlockFill,
-  RiLockUnlockLine,
   RiShare2Fill,
   RiShareLine,
-  RiTwitterLine,
   RiTwitterXLine,
   RiYoutubeLine,
 } from "@remixicon/react";

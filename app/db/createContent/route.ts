@@ -1,6 +1,5 @@
 import { NextResponse, NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
-import pgvector from "pgvector";
 import { createEmbed } from "@/lib/createEmbed";
 
 export async function POST(req: NextRequest) {
