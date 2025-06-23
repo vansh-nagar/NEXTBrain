@@ -274,7 +274,7 @@ export default function HomePage() {
         </div>
       )}
 
-      {showSharableUrl && (
+      {showSharableUrl && session?.user?.email && (
         <div
           onClick={() => {
             setshowSharableUrl(false);
