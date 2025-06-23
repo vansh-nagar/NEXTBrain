@@ -10,6 +10,8 @@ const Page = ({ params }: { params: Promise<{ email: string }> }) => {
   const [data, setdata] = useState([]);
   const [message, setmessage] = useState("");
 
+  const BASE_URI = process.env.BASE_URI || "http://localhost:3000";
+
   type content = {
     id: string;
     title: string;
@@ -20,7 +22,7 @@ const Page = ({ params }: { params: Promise<{ email: string }> }) => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:3000/db/getOtherUserData/${decodetoken}`)
+      .get(`${BASE_URI}/db/getOtherUserData/${decodetoken}`)
       .then((response) => {
         // handle response data here
         const user = response.data.foundUser;

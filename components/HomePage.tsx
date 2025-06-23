@@ -18,7 +18,6 @@ import {
   RiYoutubeLine,
 } from "@remixicon/react";
 import SmartEmbed from "./smartEmbeded";
-import { Session } from "next-auth";
 
 const BASE_URI = process.env.BASE_URI || "http://localhost:3000";
 
