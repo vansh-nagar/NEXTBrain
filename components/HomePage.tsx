@@ -20,6 +20,8 @@ import {
 import SmartEmbed from "./smartEmbeded";
 import { Session } from "next-auth";
 
+const BASE_URI = process.env.BASE_URI || "http://localhost:3000";
+
 export default function HomePage() {
   const [link, setLink] = useState("");
   const [title, setTitle] = useState("");
@@ -42,9 +44,8 @@ export default function HomePage() {
   const ErrorDiv = useRef(null);
 
   const getContent = () => {
-    // Refetch content after successful deletion
     axios
-      .post("http://localhost:3000/db/getContent", { session, filter })
+      .post(`${BASE_URI}/db/getContent`, { session, filter })
       .then((res) => {
         console.log(res.data.userContent);
         setcontent(res.data.userContent);
@@ -101,9 +102,8 @@ export default function HomePage() {
   };
 
   useEffect(() => {
-    // Refetch content after successful deletion
     axios
-      .post("http://localhost:3000/db/getContent", { session, filter })
+      .post(`${BASE_URI}/db/getContent`, { session, filter })
       .then((res) => {
         console.log(res.data.userContent);
         setcontent(res.data.userContent);
@@ -132,7 +132,7 @@ export default function HomePage() {
     }
 
     axios
-      .post("http://localhost:3000/db/createContent", {
+      .post(`${BASE_URI}/db/createContent`, {
         data: session,
         link,
         category,
@@ -159,7 +159,7 @@ export default function HomePage() {
     const contentId = e.currentTarget.parentElement?.getAttribute("data-id");
 
     axios
-      .post("http://localhost:3000/db/deleteContent", { contentId })
+      .post(`${BASE_URI}/db/deleteContent`, { contentId })
       .then((res) => {
         if (res.status === 200) {
           getContent();
@@ -172,7 +172,7 @@ export default function HomePage() {
 
   const toggleLink = () => {
     axios
-      .post("http://localhost:3000/db/toggleLink", { session, sharable })
+      .post(`${BASE_URI}/db/toggleLink`, { session, sharable })
       .then((res) => {
         setsharable(res.data.message.sharable);
       })
@@ -183,7 +183,7 @@ export default function HomePage() {
 
   const handleGroq = async () => {
     axios
-      .post("http://localhost:3000/db/ASKGroq", {
+      .post(`${BASE_URI}/db/ASKGroq`, {
         message: Prompt,
         session,
       })
@@ -283,7 +283,7 @@ export default function HomePage() {
         >
           <div className="bg-zinc-700/40 backdrop-blur-3xl rounded-md p-4 flex justify-center flex-row gap-4 items-center w-[35vw] max-md:w-[70vw] max-sm:w-[90vw] flex-wrap break-all">
             <span className="text-xs sm:text-sm md:text-base break-all">
-              {`http://localhost:3000/getContent/${session?.user.email}`}
+              {`${BASE_URI}/getContent/${session?.user.email}`}
             </span>
             <RiShare2Fill
               className="cursor-pointer"
@@ -292,7 +292,7 @@ export default function HomePage() {
                   return;
                 }
                 navigator.clipboard.writeText(
-                  `http://localhost:3000/getContent/${session?.user.email}`
+                  `${BASE_URI}/getContent/${session?.user.email}`
                 );
               }}
             />
