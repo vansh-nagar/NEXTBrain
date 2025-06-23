@@ -18,6 +18,7 @@ import {
   RiYoutubeLine,
 } from "@remixicon/react";
 import SmartEmbed from "./smartEmbeded";
+import { Session } from "next-auth";
 
 export default function HomePage() {
   const [link, setLink] = useState("");
@@ -227,7 +228,7 @@ export default function HomePage() {
             </div>
             <div className=" flex justify-end  w-full mt-4">
               <button
-                onClick={(e) => {
+                onClick={() => {
                   handleGroq();
                 }}
                 className=" bg-zinc-900 text-white hover:shadow-purple-600 hover:shadow-xl transition-all duration-200 hover:rotate-x-12 aiButton relative px-4 py-2 rounded overflow-hidden shadow-2xs shadow-green-600"

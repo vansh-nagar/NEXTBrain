@@ -1,23 +1,29 @@
 import React, { useEffect, useRef } from "react";
 
 export function SmartEmbed({ url }: { url: string | null }) {
-  if (!url) return null;
+  // Always call hooks at the top level
+  const container = useRef<HTMLDivElement | null>(null);
 
   /* ── regexes ─────────────────────────── */
-  const ytMatch = url.match(
-    /(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/
-  );
-  const twIdMatch = url.match(
-    /(?:x\.com|twitter\.com)\/(?:#!\/)?\w+\/status(?:es)?\/(\d+)/
-  );
-
-  const container = useRef<HTMLDivElement | null>(null);
+  const ytMatch = url
+    ? url.match(
+        /(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/
+      )
+    : null;
+  const twIdMatch = url
+    ? url.match(/(?:x\.com|twitter\.com)\/(?:#!\/)?\w+\/status(?:es)?\/(\d+)/)
+    : null;
 
   /* ── load / hydrate tweet ─────────────── */
   useEffect(() => {
     if (!twIdMatch) return;
 
-    const load = () => (window as any).twttr?.widgets?.load(container.current);
+    const load = () =>
+      (
+        window as unknown as {
+          twttr?: { widgets?: { load: (el: HTMLElement | null) => void } };
+        }
+      ).twttr?.widgets?.load(container.current);
 
     if (document.getElementById("twitter-wjs")) {
       load();
