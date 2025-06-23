@@ -9,6 +9,16 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 
 const prisma = new PrismaClient();
 
+if (
+  !process.env.GOOGLE_CLIENT_ID ||
+  !process.env.GOOGLE_CLIENT_SECRET ||
+  !process.env.NEXTAUTH_SECRET ||
+  !process.env.GITHUB_ID ||
+  !process.env.GITHUB_SECRET
+) {
+  throw new Error("Missing Google OAuth environment variables");
+}
+
 const handler = NextAuth({
   providers: [
     // CredentialsProvider({
