@@ -11,60 +11,60 @@ const prisma = new PrismaClient();
 
 const handler = NextAuth({
   providers: [
-    CredentialsProvider({
-      name: "email",
-      credentials: {
-        username: {
-          label: "Username",
-          type: "text",
-          placeholder: "XYZ@gmail.com",
-        },
-        password: {
-          label: "Password",
-          type: "password",
-          placeholder: "password",
-        },
-      },
-      async authorize(credentials) {
-        if (!credentials) {
-          return;
-        }
+    // CredentialsProvider({
+    //   name: "email",
+    //   credentials: {
+    //     username: {
+    //       label: "Username",
+    //       type: "text",
+    //       placeholder: "XYZ@gmail.com",
+    //     },
+    //     password: {
+    //       label: "Password",
+    //       type: "password",
+    //       placeholder: "password",
+    //     },
+    //   },
+    //   async authorize(credentials) {
+    //     if (!credentials) {
+    //       return;
+    //     }
 
-        const { username, password } = credentials;
+    //     const { username, password } = credentials;
 
-        const foundUser = await prisma.user.findUnique({
-          where: {
-            email: username,
-          },
-        });
+    //     const foundUser = await prisma.user.findUnique({
+    //       where: {
+    //         email: username,
+    //       },
+    //     });
 
-        if (foundUser) {
-          if (!foundUser.password) {
-            return null;
-          }
-          const result = await bcrypt.compare(password, foundUser.password);
-          if (result) {
-            console.log("foundUser:", foundUser);
-            const user = { name: foundUser.email };
-            return user;
-          } else {
-            return null;
-          }
-        }
+    //     if (foundUser) {
+    //       if (!foundUser.password) {
+    //         return null;
+    //       }
+    //       const result = await bcrypt.compare(password, foundUser.password);
+    //       if (result) {
+    //         console.log("foundUser:", foundUser);
+    //         const user = { name: foundUser.email };
+    //         return user;
+    //       } else {
+    //         return null;
+    //       }
+    //     }
 
-        // const hash = await bcrypt.hash(password, 10);
-        // const createdUser = await prisma.user.create({
-        //   data: {
-        //     email: credentials.username,
-        //     password: hash,
-        //     sharable: false,
-        //   },
-        // });
-        // console.log("createdUser:", createdUser);
-        // const user = { name: createdUser.email };
-        // return user;
-      },
-    }),
+    //     // const hash = await bcrypt.hash(password, 10);
+    //     // const createdUser = await prisma.user.create({
+    //     //   data: {
+    //     //     email: credentials.username,
+    //     //     password: hash,
+    //     //     sharable: false,
+    //     //   },
+    //     // });
+    //     // console.log("createdUser:", createdUser);
+    //     // const user = { name: createdUser.email };
+    //     // return user;
+    //   },
+    // }),
 
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
