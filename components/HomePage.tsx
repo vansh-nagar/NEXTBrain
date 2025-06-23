@@ -216,6 +216,9 @@ export default function HomePage() {
               className="bg-zinc-700/80 w-full text-zinc-100 px-4 py-3 rounded-md  shadow-xl mt-3.5 placeholder-zinc-400 border border-zinc-600 focus:outline-none focus:ring-2 focus:ring-zinc-500"
               placeholder="Enter your prompt here"
             />
+            <div className="text-red-400/40 text-left w-full">
+              *For best results, please provide a clear and concise description.
+            </div>
             <div className=" flex justify-end  w-full mt-4">
               <button
                 onClick={(e) => {
@@ -412,9 +415,14 @@ export default function HomePage() {
               setdescription(e.target.value);
             }}
           ></textarea>
+          <div className="text-red-500/40 flex flex-col">
+            *For best results with future AI searches, please provide a clear,
+            memorable title and a concise description.{" "}
+            <span>press ctrl + I to use AI</span>
+          </div>
 
           <div className="flex justify-end">
-            <div className="bg-zinc-700/80 mt-4 text-zinc-100 rounded-md px-2 flex justify-center gap-1 items-center py-2 shadow-xl border border-zinc-600">
+            <div className=" cursor-pointer bg-zinc-700/80 mt-4 text-zinc-100 rounded-md px-2 flex justify-center gap-1 items-center py-2 shadow-xl border border-zinc-600">
               <select
                 className="appearance-none  text-zinc-100"
                 value={category}
