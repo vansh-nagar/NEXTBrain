@@ -19,7 +19,7 @@ import {
 } from "@remixicon/react";
 import SmartEmbed from "./smartEmbeded";
 
-const BASE_URI = process.env.BASE_URI || "http://localhost:3000";
+const BASE_URI = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
 export default function HomePage() {
   const [link, setLink] = useState("");

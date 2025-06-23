@@ -10,7 +10,7 @@ const Page = ({ params }: { params: Promise<{ email: string }> }) => {
   const [data, setdata] = useState([]);
   const [message, setmessage] = useState("");
 
-  const BASE_URI = process.env.BASE_URI || "http://localhost:3000";
+  const BASE_URI = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
   type content = {
     id: string;
